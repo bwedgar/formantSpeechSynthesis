@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="apple-touch-icon" href="launch.png">
+  <link rel="apple-touch-startup-image" href="launch.png">
+  <meta name="apple-mobile-web-app-title" content="Korero">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+
+
+</head>
+
+<body>
+
+  <script>
+    addEventListener('load', function(e) {
+
+      makeObject = (array, names) => {
+        o = {}
+        names.map((v, i) => o[v] = array[i])
+        return o
+      }
+
+
+      //MODEL
+
+      syllable = "pa"
+      voices = []
+      const lang = "en-UK"//'it-IT'
+      const voiceIndex = 2
+
+      const speak = async text => {
+        if (!speechSynthesis) {
+          return
+        }
+        const message = new SpeechSynthesisUtterance(text)
+        message.voice = await chooseVoice()
+        speechSynthesis.speak(message)
+      }
+
+      const getVoices = () => {
+        return new Promise(resolve => {
+          let voices = speechSynthesis.getVoices()
+          if (voices.length) {
+            resolve(voices)
+            return
+          }
+          speechSynthesis.onvoiceschanged = () => {
+            voices = speechSynthesis.getVoices()
+            voices.forEach(voice =>
+    console.log(voice.name, voice.lang))
+            resolve(voices)
+          }
+        })
+      }
+
+      const chooseVoice = async () => {
+        const voices = (await getVoices()).filter(voice => voice.lang == lang)
+
+        return new Promise(resolve => {
+          resolve(voices[voiceIndex])
+        })
+      }
+
+
+      //VIEW
+
+      addElement = (id, container, width, style, text) => {
+        element = document.createElement("div")
+        element.style.cssText = style
+        element.style.width = width + "%"
+        element.id = id
+        element.innerHTML = text
+        container.appendChild(element)
+        return element
+      }
+      style = "color:white;background:black;border-style:solid;border-width:1px;font-size:2vw;font-family:verdana;"
+      buttonStyle = style + "position:relative;height:5vw;text-align:center;"
+      buttonLeftStyle = buttonStyle + "position:relative;float:left;text-align:center;"
+      buttonRightStyle = buttonStyle + "position:relative;right:0;text-align:center;"
+      listStyle = buttonStyle + "position:relative;right:0;text-align:left;"
+      divStyle = style + "position:relative;text-align:left;display:block;"
+      correctButtonStyle = buttonStyle + "color:limeGreen;"
+      hiddenButtonStyle = buttonStyle + "color:black;font-size:2vw;"
+      revealedButtonStyle = buttonStyle + "width:25%;font-size:2vw;"
+
+
+
+      display = () => {
+        body = document.body
+        body.style.cssText = "background:black;"
+        body.innerHTML = ""
+        body.addEventListener("click", clicked)
+        pairingButton = addElement("pairingButton", body, 16, buttonStyle, "korero")
+
+      }
+
+
+
+      //CONTROLLER
+
+      clicked = e => {
+        id = e.target.id
+        element = e.target
+
+        if (id == "pairingButton") {
+          speak("i wish you a merry christmas")
+        }
+      }
+
+
+      display();
+    })
+  </script>
+</body>
+
+</html>
