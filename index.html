@@ -19,31 +19,47 @@
 <body>
 
 
-  <button id="a" class="button">a</button><br>
+  <button id="ee" class="button">ee</button><br>
+  <button id="oo" class="button">oo</button><br>
+
+  <button id="i" class="button">i</button><br>
+
   <script>
-    play = (soundArray) => {
+    play = (formant1, formant2, formant3) => {
 
       audioCtx = new AudioContext || window.webkitAudioContext;
 
       oscillator = audioCtx.createOscillator()
-      biquadFilter = audioCtx.createBiquadFilter()
+      f1 = audioCtx.createBiquadFilter()
+      f2 = audioCtx.createBiquadFilter()
+      f3 = audioCtx.createBiquadFilter()
       gainNode = audioCtx.createGain()
 
-      oscillator.connect(biquadFilter)
-      biquadFilter.connect(gainNode)
+      oscillator.connect(f1)
+      oscillator.connect(f2)
+      oscillator.connect(f3)
+
+      f1.connect(gainNode)
+      f2.connect(gainNode)
+      f3.connect(gainNode)
+
       gainNode.connect(audioCtx.destination)
 
       oscillator.type = "sawtooth"
       elapsedTime = 0 + audioCtx.currentTime;
 
-      oscillator.frequency = 100
-      biquadFilter.frequency = 100
-      biquadFilter.gain = 1
-      biquadFilter.type = "bandpass"
+      oscillator.frequency.value = 194
+      f1.frequency.value = formant1
+      f2.frequency.value = formant2
+      f3.frequency.value = formant3
+      //f1.Q.value=8
+      f1.type = "bandpass"
+      f2.type = "bandpass"
+      f3.type = "bandpass"
 
       oscillator.start(0)
       gainNode.gain.setValueAtTime(1, elapsedTime);
-      gainNode.gain.setValueAtTime(0, elapsedTime + 2);
+      gainNode.gain.setValueAtTime(0, elapsedTime + 1);
       elapsedTime += 2;
     }
 
@@ -51,8 +67,14 @@
 
 
 
-    document.getElementById("a").addEventListener("click", () => {
-      play([123, 588, 1952, 2601, 3624]);
+    document.getElementById("ee").addEventListener("click", () => {
+      play(270, 2300, 3000);
+    });
+    document.getElementById("oo").addEventListener("click", () => {
+      play(300, 870, 2250);
+    });
+    document.getElementById("i").addEventListener("click", () => {
+      play(400, 2000, 2550);
     });
   </script>
 
